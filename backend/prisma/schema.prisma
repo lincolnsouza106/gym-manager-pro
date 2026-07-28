@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("STUDENT") // ADMIN, RECEPTIONIST, INSTRUCTOR, STUDENT
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  classSchedules ClassSchedule[]
+}
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  photo       String?
+  name        String
+  cpf         String   @unique
+  birthDate   DateTime
+  phone       String
+  address     String?
+  status      String   @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  measurements  BodyMeasurement[]
+  enrollments   Enrollment[]
+  invoices      Invoice[]
+  checkins      ClassCheckin[]
+}
+
+model BodyMeasurement {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  weight    Float
+  height    Float
+  bodyFat   Float?
+  chest     Float?
+  waist     Float?
+  hips      Float?
+  arms      Float?
+  thighs    Float?
+  date      DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+}
+
+model Plan {
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String?
+  durationMonths Int
+  price          Float
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  planId    Int
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student  Student   @relation(fields: [studentId], references: [id])
+  plan     Plan      @relation(fields: [planId], references: [id])
+  invoices Invoice[]
+}
+
+model Modality {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  maxCapacity Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  schedules ClassSchedule[]
+}
+
+model ClassSchedule {
+  id           Int    @id @default(autoincrement())
+  modalityId   Int
+  dayOfWeek    Int // 0=Sunday, 1=Monday, ..., 6=Saturday
+  startTime    String // "08:00"
+  endTime      String // "09:00"
+  instructorId Int
+
+  modality   Modality       @relation(fields: [modalityId], references: [id])
+  instructor User           @relation(fields: [instructorId], references: [id])
+  checkins   ClassCheckin[]
+}
+
+model ClassCheckin {
+  id              Int      @id @default(autoincrement())
+  classScheduleId Int
+  studentId       Int
+  checkinDate     DateTime @default(now())
+
+  classSchedule ClassSchedule @relation(fields: [classScheduleId], references: [id])
+  student       Student       @relation(fields: [studentId], references: [id])
+}
+
+model Invoice {
+  id           Int       @id @default(autoincrement())
+  enrollmentId Int
+  studentId    Int
+  amount       Float
+  discount     Float     @default(0)
+  finalAmount  Float
+  dueDate      DateTime
+  paidAt       DateTime?
+  status       String    @default("PENDING") // PENDING, PAID, OVERDUE, CANCELLED
+  createdAt    DateTime  @default(now())
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
+}
