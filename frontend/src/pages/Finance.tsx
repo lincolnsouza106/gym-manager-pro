@@ -30,6 +30,20 @@ interface FinanceSummary {
   totalInvoices: number;
 }
 
+const AVATAR_COLORS = [
+  'from-brand-500 to-brand-700',
+  'from-accent-500 to-accent-700',
+  'from-emerald-500 to-emerald-700',
+  'from-violet-500 to-violet-700',
+  'from-rose-500 to-rose-700',
+  'from-cyan-500 to-cyan-700',
+];
+
+const getAvatarColor = (name: string) => {
+  const idx = name.charCodeAt(0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+};
+
 export default function Finance() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [summary, setSummary] = useState<FinanceSummary | null>(null);
@@ -98,7 +112,7 @@ export default function Finance() {
       case 'PAID': return <span className="badge-success">Pago</span>;
       case 'PENDING': return <span className="badge-warning">Pendente</span>;
       case 'OVERDUE': return <span className="badge-danger">Vencida</span>;
-      case 'CANCELLED': return <span className="badge bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">Cancelada</span>;
+      case 'CANCELLED': return <span className="badge bg-surface-100 text-gray-600 dark:bg-surface-800 dark:text-gray-400 ring-1 ring-gray-200 dark:ring-gray-700">Cancelada</span>;
       default: return <span className="badge-info">{status}</span>;
     }
   };
@@ -113,37 +127,37 @@ export default function Finance() {
       {/* Summary Cards */}
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="glass-card rounded-2xl p-6" data-testid="card-total-revenue">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+          <div className="glass-card rounded-2xl p-6 card-accent-emerald" data-testid="card-total-revenue">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-11 h-11 rounded-xl bg-success-50 dark:bg-emerald-950/30 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-success-600 dark:text-emerald-400" />
               </div>
               <span className="text-sm font-medium text-gray-500">Receita Total</span>
             </div>
             {/* [BUG_INTENCIONAL_ID_41] No decimal places in summary (uses Math.floor) */}
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(Math.floor(summary.totalRevenue))}</p>
+            <p className="text-2xl font-bold font-display text-success-700 dark:text-emerald-300">{formatCurrency(Math.floor(summary.totalRevenue))}</p>
             <p className="text-xs text-gray-500 mt-1">{summary.totalPaid} faturas pagas</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-6" data-testid="card-pending">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-yellow-600" />
+          <div className="glass-card rounded-2xl p-6 card-accent-amber" data-testid="card-pending">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-11 h-11 rounded-xl bg-warning-50 dark:bg-amber-950/30 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
               <span className="text-sm font-medium text-gray-500">Pendente</span>
             </div>
-            <p className="text-2xl font-bold text-yellow-600">{formatCurrency(summary.pendingAmount)}</p>
+            <p className="text-2xl font-bold font-display text-amber-700 dark:text-amber-300">{formatCurrency(summary.pendingAmount)}</p>
             <p className="text-xs text-gray-500 mt-1">{summary.totalPending} faturas pendentes</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-6" data-testid="card-overdue">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
+          <div className="glass-card rounded-2xl p-6 card-accent-red" data-testid="card-overdue">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-11 h-11 rounded-xl bg-danger-50 dark:bg-red-950/30 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-danger-600 dark:text-red-400" />
               </div>
               <span className="text-sm font-medium text-gray-500">Vencidas</span>
             </div>
-            <p className="text-2xl font-bold text-red-600">{formatCurrency(summary.overdueAmount)}</p>
+            <p className="text-2xl font-bold font-display text-danger-700 dark:text-red-300">{formatCurrency(summary.overdueAmount)}</p>
             <p className="text-xs text-gray-500 mt-1">{summary.totalOverdue} faturas vencidas</p>
           </div>
         </div>
@@ -171,33 +185,33 @@ export default function Finance() {
       {/* Invoices Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => <div key={i} className="skeleton h-16 rounded-xl" />)}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full" data-testid="table-invoices">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Aluno</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Plano</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Vencimento</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Valor</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
-                  <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Ações</th>
+                <tr className="bg-surface-50/50 dark:bg-surface-800/30 border-b border-surface-200 dark:border-surface-800">
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aluno</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plano</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Vencimento</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-surface-100 dark:divide-surface-800/50">
                 {invoices.map((invoice) => (
                   <tr key={invoice.id} className="table-row-hover" data-testid={`invoice-row-${invoice.id}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full gradient-brand flex items-center justify-center text-white text-xs font-bold">
+                        <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getAvatarColor(invoice.student.name)} flex items-center justify-center text-white text-xs font-bold`}>
                           {invoice.student.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white text-sm">{invoice.student.name}</p>
-                          <p className="text-xs text-gray-500">{invoice.student.cpf}</p>
+                          <p className="font-medium text-surface-900 dark:text-white text-sm">{invoice.student.name}</p>
+                          <p className="text-xs text-gray-500 font-mono">{invoice.student.cpf}</p>
                         </div>
                       </div>
                     </td>
@@ -208,7 +222,7 @@ export default function Finance() {
                       {formatDate(invoice.dueDate)}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(invoice.finalAmount)}</p>
+                      <p className="text-sm font-semibold text-surface-900 dark:text-white">{formatCurrency(invoice.finalAmount)}</p>
                       {invoice.discount > 0 && (
                         <p className="text-xs text-gray-500 line-through">{formatCurrency(invoice.amount)}</p>
                       )}
@@ -217,12 +231,12 @@ export default function Finance() {
                       {getStatusBadge(invoice.status)}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-0.5">
                         {(invoice.status === 'PENDING' || invoice.status === 'OVERDUE') && (
                           <>
                             <button
                               onClick={() => handlePay(invoice.id)}
-                              className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 transition-colors"
+                              className="p-2 rounded-lg text-gray-400 hover:bg-success-50 dark:hover:bg-emerald-950/30 hover:text-success-600 transition-all duration-200"
                               title="Registrar pagamento"
                               data-testid={`btn-pay-${invoice.id}`}
                             >
@@ -230,7 +244,7 @@ export default function Finance() {
                             </button>
                             <button
                               onClick={() => { setDiscountModal(invoice.id); setDiscountPercent(0); }}
-                              className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 transition-colors"
+                              className="p-2 rounded-lg text-gray-400 hover:bg-violet-50 dark:hover:bg-violet-950/30 hover:text-violet-600 transition-all duration-200"
                               title="Aplicar desconto"
                               data-testid={`btn-discount-${invoice.id}`}
                             >
@@ -250,17 +264,17 @@ export default function Finance() {
 
       {/* Discount Modal */}
       {discountModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-discount">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Aplicar Desconto</h2>
-              <button onClick={() => setDiscountModal(null)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-discount-modal">
+        <div className="modal-overlay" data-testid="modal-discount">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-sm animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Aplicar Desconto</h2>
+              <button onClick={() => setDiscountModal(null)} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-discount-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <form onSubmit={handleApplyDiscount} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Percentual de desconto (%)</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Percentual de desconto (%)</label>
                 <input
                   type="number"
                   value={discountPercent}
@@ -272,9 +286,9 @@ export default function Finance() {
                   required
                   data-testid="input-discount-percent"
                 />
-                <p className="text-xs text-gray-500 mt-1">Digite o percentual de desconto (ex: 10 para 10%)</p>
+                <p className="text-xs text-gray-500 mt-1.5">Digite o percentual de desconto (ex: 10 para 10%)</p>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={() => setDiscountModal(null)} className="btn-secondary">Cancelar</button>
                 <button type="submit" className="btn-primary" data-testid="btn-apply-discount">Aplicar</button>
               </div>

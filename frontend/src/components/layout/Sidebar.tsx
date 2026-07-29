@@ -46,20 +46,23 @@ export default function Sidebar() {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-6 border-b border-gray-200 dark:border-gray-700">
-        <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-500/25">
+      <div className="flex items-center gap-3 px-5 py-6">
+        <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-md shadow-brand-600/20 flex-shrink-0">
           <Dumbbell className="w-5 h-5 text-white" />
         </div>
         {!collapsed && (
           <div className="animate-fade-in">
-            <h1 className="text-lg font-bold gradient-text">GymManager</h1>
-            <p className="text-[10px] text-gray-400 font-medium tracking-wider uppercase">Pro Edition</p>
+            <h1 className="text-lg font-bold font-display tracking-tight text-surface-900 dark:text-white">GymManager</h1>
+            <p className="text-[10px] text-brand-600 dark:text-brand-400 font-semibold tracking-[0.2em] uppercase">Pro Edition</p>
           </div>
         )}
       </div>
 
+      {/* Divider */}
+      <div className="mx-4 h-px bg-gradient-to-r from-transparent via-surface-200 dark:via-surface-800 to-transparent" />
+
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
         {filteredMenu.map((item) => (
           <NavLink
             key={item.path}
@@ -77,21 +80,26 @@ export default function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700">
+      <div className="px-3 pb-3">
+        <div className="mx-1 mb-3 h-px bg-gradient-to-r from-transparent via-surface-200 dark:via-surface-800 to-transparent" />
         {user && !collapsed && (
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-9 h-9 rounded-full gradient-brand flex items-center justify-center text-white text-sm font-bold">
+          <div className="flex items-center gap-3 px-3 py-2.5 mb-2 rounded-xl bg-surface-50 dark:bg-surface-800/50">
+            <div className="w-9 h-9 rounded-full gradient-brand-vivid flex items-center justify-center text-white text-sm font-bold flex-shrink-0 avatar-ring">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
-              <p className="text-xs text-gray-500 truncate">{user.role}</p>
+              <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                {user.role === 'ADMIN' ? 'Administrador' :
+                 user.role === 'RECEPTIONIST' ? 'Recepcionista' :
+                 user.role === 'INSTRUCTOR' ? 'Professor' : 'Aluno'}
+              </p>
             </div>
           </div>
         )}
         <button
           onClick={handleLogout}
-          className={`sidebar-link w-full text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 ${collapsed ? 'justify-center px-2' : ''}`}
+          className={`sidebar-link w-full text-danger-500 hover:bg-danger-50 hover:text-danger-600 dark:hover:bg-red-950/30 ${collapsed ? 'justify-center px-2' : ''}`}
           data-testid="btn-logout"
         >
           <LogOut className="w-5 h-5" />
@@ -102,7 +110,7 @@ export default function Sidebar() {
       {/* Collapse toggle - desktop only */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex items-center justify-center p-2 mx-3 mb-3 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="hidden lg:flex items-center justify-center p-2 mx-3 mb-3 rounded-xl text-gray-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-brand-600 transition-colors"
         data-testid="btn-collapse-sidebar"
       >
         {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -115,22 +123,22 @@ export default function Sidebar() {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded-xl bg-white dark:bg-surface-800 shadow-elevated border border-surface-200 dark:border-surface-700"
         data-testid="btn-mobile-menu"
       >
-        <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+        <Menu className="w-5 h-5 text-surface-700 dark:text-gray-300" />
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
           <div
-            className="w-72 h-full bg-white dark:bg-gray-900 shadow-2xl animate-slide-up"
+            className="w-72 h-full bg-white dark:bg-surface-900 shadow-2xl animate-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
               data-testid="btn-close-mobile-menu"
             >
               <X className="w-5 h-5" />
@@ -142,8 +150,8 @@ export default function Sidebar() {
 
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${
-          collapsed ? 'w-[72px]' : 'w-[280px]'
+        className={`hidden lg:flex flex-col bg-white dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800 transition-all duration-300 ${
+          collapsed ? 'w-[72px]' : 'w-[272px]'
         }`}
       >
         {sidebarContent}

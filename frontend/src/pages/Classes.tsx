@@ -148,23 +148,23 @@ export default function Classes() {
           [...Array(3)].map((_, i) => <div key={i} className="skeleton h-40 rounded-2xl" />)
         ) : (
           modalities.map((modality) => (
-            <div key={modality.id} className="glass-card rounded-2xl p-5" data-testid={`modality-card-${modality.id}`}>
+            <div key={modality.id} className="glass-card rounded-2xl p-5 card-accent-purple" data-testid={`modality-card-${modality.id}`}>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/30 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white">{modality.name}</h3>
+                  <h3 className="font-bold font-display text-surface-900 dark:text-white">{modality.name}</h3>
                   <p className="text-xs text-gray-500">{modality.description}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
+                <span className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-gray-400" />
                   Max: {modality.maxCapacity}
                 </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-gray-400" />
                   {modality.schedules?.length || 0} horários
                 </span>
               </div>
@@ -175,29 +175,29 @@ export default function Classes() {
 
       {/* Schedule Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="font-semibold text-gray-900 dark:text-white">Grade de Horários</h3>
+        <div className="p-6 border-b border-surface-200 dark:border-surface-800">
+          <h3 className="font-semibold font-display text-surface-900 dark:text-white">Grade de Horários</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full" data-testid="table-schedules">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Modalidade</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Dia</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Horário</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Instrutor</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Check-ins</th>
-                <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Ações</th>
+              <tr className="bg-surface-50/50 dark:bg-surface-800/30 border-b border-surface-200 dark:border-surface-800">
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Modalidade</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dia</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Horário</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Instrutor</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Check-ins</th>
+                <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className="divide-y divide-surface-100 dark:divide-surface-800/50">
               {schedules.map((schedule) => (
                 <tr key={schedule.id} className="table-row-hover" data-testid={`schedule-row-${schedule.id}`}>
                   <td className="px-6 py-4">
                     <span className="badge-info">{schedule.modality?.name}</span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{dayNames[schedule.dayOfWeek]}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                  <td className="px-6 py-4 text-sm font-medium font-mono text-surface-900 dark:text-white">
                     {schedule.startTime} - {schedule.endTime}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell">
@@ -211,7 +211,7 @@ export default function Classes() {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => { setSelectedSchedule(schedule); setModalType('checkin'); }}
-                        className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 transition-colors"
+                        className="p-2 rounded-lg text-gray-400 hover:bg-success-50 dark:hover:bg-emerald-950/30 hover:text-success-600 transition-all duration-200"
                         title="Check-in"
                         data-testid={`btn-checkin-${schedule.id}`}
                       >
@@ -219,7 +219,7 @@ export default function Classes() {
                       </button>
                       <button
                         onClick={() => handleDeleteSchedule(schedule.id)}
-                        className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600 transition-colors"
+                        className="p-2 rounded-lg text-gray-400 hover:bg-danger-50 dark:hover:bg-red-950/30 hover:text-danger-600 transition-all duration-200"
                         data-testid={`btn-delete-schedule-${schedule.id}`}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -235,28 +235,28 @@ export default function Classes() {
 
       {/* Modality Modal */}
       {modalType === 'modality' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-modality">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Nova Modalidade</h2>
-              <button onClick={() => setModalType(null)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-modality-modal">
+        <div className="modal-overlay" data-testid="modal-modality">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-lg animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Nova Modalidade</h2>
+              <button onClick={() => setModalType(null)} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-modality-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <form onSubmit={handleCreateModality} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Nome</label>
                 <input type="text" value={modalityForm.name} onChange={(e) => setModalityForm({ ...modalityForm, name: e.target.value })} className="input-base" required data-testid="input-modality-name" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Descrição</label>
                 <textarea value={modalityForm.description} onChange={(e) => setModalityForm({ ...modalityForm, description: e.target.value })} className="input-base h-20 resize-none" data-testid="input-modality-description" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Capacidade Máxima</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Capacidade Máxima</label>
                 <input type="number" value={modalityForm.maxCapacity} onChange={(e) => setModalityForm({ ...modalityForm, maxCapacity: parseInt(e.target.value) })} min="1" className="input-base" data-testid="input-modality-capacity" />
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={() => setModalType(null)} className="btn-secondary">Cancelar</button>
                 <button type="submit" className="btn-primary" data-testid="btn-save-modality">Criar</button>
               </div>
@@ -267,17 +267,17 @@ export default function Classes() {
 
       {/* Schedule Modal */}
       {modalType === 'schedule' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-schedule">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Novo Horário</h2>
-              <button onClick={() => setModalType(null)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-schedule-modal">
+        <div className="modal-overlay" data-testid="modal-schedule">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-lg animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Novo Horário</h2>
+              <button onClick={() => setModalType(null)} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-schedule-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <form onSubmit={handleCreateSchedule} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modalidade</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Modalidade</label>
                 <select value={scheduleForm.modalityId} onChange={(e) => setScheduleForm({ ...scheduleForm, modalityId: parseInt(e.target.value) })} className="input-base" required data-testid="select-schedule-modality">
                   <option value={0}>Selecione</option>
                   {modalities.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
@@ -285,29 +285,29 @@ export default function Classes() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dia</label>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Dia</label>
                   <select value={scheduleForm.dayOfWeek} onChange={(e) => setScheduleForm({ ...scheduleForm, dayOfWeek: parseInt(e.target.value) })} className="input-base" data-testid="select-schedule-day">
                     {dayNames.map((d, i) => <option key={i} value={i}>{d}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Início</label>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Início</label>
                   <input type="time" value={scheduleForm.startTime} onChange={(e) => setScheduleForm({ ...scheduleForm, startTime: e.target.value })} className="input-base" data-testid="input-schedule-start" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fim</label>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Fim</label>
                   <input type="time" value={scheduleForm.endTime} onChange={(e) => setScheduleForm({ ...scheduleForm, endTime: e.target.value })} className="input-base" data-testid="input-schedule-end" />
                 </div>
               </div>
               <div>
                 {/* [BUG_INTENCIONAL_ID_43] Shows ALL users, not just instructors */}
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instrutor</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Instrutor</label>
                 <select value={scheduleForm.instructorId} onChange={(e) => setScheduleForm({ ...scheduleForm, instructorId: parseInt(e.target.value) })} className="input-base" required data-testid="select-schedule-instructor">
                   <option value={0}>Selecione</option>
                   {allUsers.map((u: any) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
                 </select>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={() => setModalType(null)} className="btn-secondary">Cancelar</button>
                 <button type="submit" className="btn-primary" data-testid="btn-save-schedule">Criar</button>
               </div>
@@ -318,28 +318,28 @@ export default function Classes() {
 
       {/* Check-in Modal */}
       {modalType === 'checkin' && selectedSchedule && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-checkin">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Check-in de Aluno</h2>
-              <button onClick={() => setModalType(null)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-checkin-modal">
+        <div className="modal-overlay" data-testid="modal-checkin">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-md animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Check-in de Aluno</h2>
+              <button onClick={() => setModalType(null)} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-checkin-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <form onSubmit={handleCheckin} className="p-6 space-y-4">
-              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <div className="p-4 rounded-xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200/50 dark:border-surface-800/30">
                 <p className="text-sm text-gray-500">Aula</p>
-                <p className="font-medium text-gray-900 dark:text-white">{selectedSchedule.modality?.name}</p>
-                <p className="text-xs text-gray-500">{dayNames[selectedSchedule.dayOfWeek]} {selectedSchedule.startTime}-{selectedSchedule.endTime}</p>
+                <p className="font-medium font-display text-surface-900 dark:text-white">{selectedSchedule.modality?.name}</p>
+                <p className="text-xs text-gray-500 font-mono">{dayNames[selectedSchedule.dayOfWeek]} {selectedSchedule.startTime}-{selectedSchedule.endTime}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aluno</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Aluno</label>
                 <select value={checkinStudentId} onChange={(e) => setCheckinStudentId(parseInt(e.target.value))} className="input-base" required data-testid="select-checkin-student">
                   <option value={0}>Selecione um aluno</option>
                   {students.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={() => setModalType(null)} className="btn-secondary">Cancelar</button>
                 <button type="submit" className="btn-primary" data-testid="btn-confirm-checkin">Confirmar Check-in</button>
               </div>

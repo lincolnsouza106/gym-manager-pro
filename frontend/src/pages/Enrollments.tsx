@@ -27,6 +27,20 @@ interface Student {
   cpf: string;
 }
 
+const AVATAR_COLORS = [
+  'from-brand-500 to-brand-700',
+  'from-accent-500 to-accent-700',
+  'from-emerald-500 to-emerald-700',
+  'from-violet-500 to-violet-700',
+  'from-rose-500 to-rose-700',
+  'from-cyan-500 to-cyan-700',
+];
+
+const getAvatarColor = (name: string) => {
+  const idx = name.charCodeAt(0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+};
+
 export default function Enrollments() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -120,33 +134,33 @@ export default function Enrollments() {
 
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => <div key={i} className="skeleton h-16 rounded-xl" />)}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full" data-testid="table-enrollments">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Aluno</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Plano</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Início</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase hidden md:table-cell">Fim</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Status</th>
-                  <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Ações</th>
+                <tr className="bg-surface-50/50 dark:bg-surface-800/30 border-b border-surface-200 dark:border-surface-800">
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aluno</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plano</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Início</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Fim</th>
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-surface-100 dark:divide-surface-800/50">
                 {enrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="table-row-hover" data-testid={`enrollment-row-${enrollment.id}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full gradient-brand flex items-center justify-center text-white text-xs font-bold">
+                        <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getAvatarColor(enrollment.student.name)} flex items-center justify-center text-white text-xs font-bold`}>
                           {enrollment.student.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white text-sm">{enrollment.student.name}</p>
-                          <p className="text-xs text-gray-500">{enrollment.student.cpf}</p>
+                          <p className="font-medium text-surface-900 dark:text-white text-sm">{enrollment.student.name}</p>
+                          <p className="text-xs text-gray-500 font-mono">{enrollment.student.cpf}</p>
                         </div>
                       </div>
                     </td>
@@ -164,12 +178,12 @@ export default function Enrollments() {
                       {getStatusBadge(enrollment)}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-0.5">
                         {enrollment.status === 'ACTIVE' && (
                           <>
                             <button
                               onClick={() => handleRenew(enrollment.id)}
-                              className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 transition-colors"
+                              className="p-2 rounded-lg text-gray-400 hover:bg-success-50 dark:hover:bg-emerald-950/30 hover:text-success-600 transition-all duration-200"
                               title="Renovar"
                               data-testid={`btn-renew-${enrollment.id}`}
                             >
@@ -177,7 +191,7 @@ export default function Enrollments() {
                             </button>
                             <button
                               onClick={() => handleCancel(enrollment.id)}
-                              className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600 transition-colors"
+                              className="p-2 rounded-lg text-gray-400 hover:bg-danger-50 dark:hover:bg-red-950/30 hover:text-danger-600 transition-all duration-200"
                               title="Cancelar"
                               data-testid={`btn-cancel-enrollment-${enrollment.id}`}
                             >
@@ -197,18 +211,18 @@ export default function Enrollments() {
 
       {/* Create Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-enrollment">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Nova Matrícula</h2>
-              <button onClick={() => setModalOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-enrollment-modal">
+        <div className="modal-overlay" data-testid="modal-enrollment">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-lg animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Nova Matrícula</h2>
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-enrollment-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
 
             <form onSubmit={handleCreate} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aluno</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Aluno</label>
                 <select
                   value={formData.studentId}
                   onChange={(e) => setFormData({ ...formData, studentId: parseInt(e.target.value) })}
@@ -224,7 +238,7 @@ export default function Enrollments() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plano</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Plano</label>
                 <select
                   value={formData.planId}
                   onChange={(e) => setFormData({ ...formData, planId: parseInt(e.target.value) })}
@@ -240,7 +254,7 @@ export default function Enrollments() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Início</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Data de Início</label>
                 <input
                   type="date"
                   value={formData.startDate}
@@ -251,7 +265,7 @@ export default function Enrollments() {
               </div>
 
               {/* [BUG_INTENCIONAL_ID_4] Save button disappears on mobile (< 768px) */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary" data-testid="btn-cancel-enrollment">
                   Cancelar
                 </button>

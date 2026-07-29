@@ -29,6 +29,22 @@ interface Pagination {
 // [BUG_INTENCIONAL_ID_8] editingStudent state is not cleaned when modal closes without saving
 let sharedEditStudent: Student | null = null;
 
+const AVATAR_COLORS = [
+  'from-brand-500 to-brand-700',
+  'from-accent-500 to-accent-700',
+  'from-emerald-500 to-emerald-700',
+  'from-violet-500 to-violet-700',
+  'from-rose-500 to-rose-700',
+  'from-cyan-500 to-cyan-700',
+  'from-indigo-500 to-indigo-700',
+  'from-amber-500 to-amber-700',
+];
+
+const getAvatarColor = (name: string) => {
+  const idx = name.charCodeAt(0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+};
+
 export default function Students() {
   const [students, setStudents] = useState<Student[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 10, total: 0, totalPages: 0 });
@@ -183,7 +199,7 @@ export default function Students() {
       <div className="glass-card rounded-2xl p-4">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar por nome, CPF ou telefone..."
@@ -213,7 +229,7 @@ export default function Students() {
       {/* Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="skeleton h-16 rounded-xl" />
             ))}
@@ -224,34 +240,34 @@ export default function Students() {
             <div className="overflow-x-auto">
               <table className="w-full" data-testid="table-students">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      <button className="flex items-center gap-1" data-testid="sort-name">
+                  <tr className="bg-surface-50/50 dark:bg-surface-800/30 border-b border-surface-200 dark:border-surface-800">
+                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      <button className="flex items-center gap-1 hover:text-brand-600 transition-colors" data-testid="sort-name">
                         Aluno <ArrowUpDown className="w-3 h-3" />
                       </button>
                     </th>
-                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">CPF</th>
-                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Telefone</th>
-                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Plano</th>
-                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
+                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">CPF</th>
+                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Telefone</th>
+                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Plano</th>
+                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="text-right px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                <tbody className="divide-y divide-surface-100 dark:divide-surface-800/50">
                   {sortedStudents.map((student) => (
                     <tr key={student.id} className="table-row-hover" data-testid={`student-row-${student.id}`}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${getAvatarColor(student.name)} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
                             {student.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900 dark:text-white">{student.name}</p>
+                            <p className="font-medium text-surface-900 dark:text-white">{student.name}</p>
                             <p className="text-xs text-gray-500 md:hidden">{student.phone}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.cpf}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 font-mono">{student.cpf}</td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell">{student.phone}</td>
                       <td className="px-6 py-4 text-sm hidden lg:table-cell">
                         {student.enrollments?.[0]?.plan?.name ? (
@@ -266,24 +282,24 @@ export default function Students() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-0.5">
                           <button
                             onClick={() => openDetailModal(student.id)}
-                            className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-brand-600 transition-colors"
+                            className="p-2 rounded-lg text-gray-400 hover:bg-brand-50 dark:hover:bg-brand-950/30 hover:text-brand-600 transition-all duration-200"
                             data-testid={`btn-view-student-${student.id}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => openEditModal(student)}
-                            className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-yellow-600 transition-colors"
+                            className="p-2 rounded-lg text-gray-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:text-amber-600 transition-all duration-200"
                             data-testid={`btn-edit-student-${student.id}`}
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeleteConfirm(student.id)}
-                            className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600 transition-colors"
+                            className="p-2 rounded-lg text-gray-400 hover:bg-danger-50 dark:hover:bg-red-950/30 hover:text-danger-600 transition-all duration-200"
                             data-testid={`btn-delete-student-${student.id}`}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -297,10 +313,10 @@ export default function Students() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-surface-200 dark:border-surface-800">
               <p className="text-sm text-gray-500">
-                Mostrando <span className="font-medium">{students.length}</span> de{' '}
-                <span className="font-medium">{pagination.total}</span> alunos
+                Mostrando <span className="font-semibold text-surface-700 dark:text-gray-300">{students.length}</span> de{' '}
+                <span className="font-semibold text-surface-700 dark:text-gray-300">{pagination.total}</span> alunos
               </p>
               <div className="flex items-center gap-2">
                 <button
@@ -311,7 +327,7 @@ export default function Students() {
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-sm text-gray-600 dark:text-gray-400 px-3" data-testid="pagination-info">
+                <span className="text-sm text-gray-600 dark:text-gray-400 px-3 font-medium" data-testid="pagination-info">
                   Página {pagination.page} de {pagination.totalPages}
                 </span>
                 <button
@@ -331,22 +347,22 @@ export default function Students() {
       {/* Create/Edit Modal */}
       {modalOpen && (
         // [BUG_INTENCIONAL_ID_31] Modal overlay doesn't prevent background scroll
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-student">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+        <div className="modal-overlay" data-testid="modal-student">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">
                 {selectedStudent ? 'Editar Aluno' : 'Novo Aluno'}
               </h2>
-              <button onClick={closeModal} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-testid="btn-close-modal">
+              <button onClick={closeModal} className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors" data-testid="btn-close-modal">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome completo</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Nome completo</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={formData.name}
@@ -361,7 +377,7 @@ export default function Students() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   {/* [BUG_INTENCIONAL_ID_1] CPF input accepts letters - no mask/validation on frontend */}
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CPF</label>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">CPF</label>
                   <input
                     type="text"
                     value={formData.cpf}
@@ -374,9 +390,9 @@ export default function Students() {
                 </div>
                 <div>
                   {/* [BUG_INTENCIONAL_ID_5] Birth date allows future dates - no max attribute */}
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Nascimento</label>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Data de Nascimento</label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       type="date"
                       value={formData.birthDate}
@@ -391,9 +407,9 @@ export default function Students() {
 
               <div>
                 {/* [BUG_INTENCIONAL_ID_13] Phone field accepts any string, no mask */}
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telefone</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Telefone</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={formData.phone}
@@ -407,9 +423,9 @@ export default function Students() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Endereço</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Endereço</label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={formData.address}
@@ -422,7 +438,7 @@ export default function Students() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                <label className="block text-sm font-medium text-surface-700 dark:text-gray-300 mb-1.5">Status</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -434,7 +450,7 @@ export default function Students() {
                 </select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-800">
                 <button type="button" onClick={closeModal} className="btn-secondary" data-testid="btn-cancel-student">
                   Cancelar
                 </button>
@@ -449,13 +465,13 @@ export default function Students() {
 
       {/* Detail Modal */}
       {detailModalOpen && selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-student-detail">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Detalhes do Aluno</h2>
+        <div className="modal-overlay" data-testid="modal-student-detail">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
+            <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+              <h2 className="text-lg font-bold font-display text-surface-900 dark:text-white">Detalhes do Aluno</h2>
               <button
                 onClick={() => { setDetailModalOpen(false); setSelectedStudent(null); }}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                 data-testid="btn-close-detail-modal"
               >
                 <X className="w-5 h-5 text-gray-400" />
@@ -464,12 +480,12 @@ export default function Students() {
 
             <div className="p-6 space-y-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full gradient-brand flex items-center justify-center text-white text-2xl font-bold">
+                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${getAvatarColor(selectedStudent.name)} flex items-center justify-center text-white text-2xl font-bold`}>
                   {selectedStudent.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedStudent.name}</h3>
-                  <p className="text-sm text-gray-500">CPF: {selectedStudent.cpf}</p>
+                  <h3 className="text-xl font-bold font-display text-surface-900 dark:text-white">{selectedStudent.name}</h3>
+                  <p className="text-sm text-gray-500 font-mono">CPF: {selectedStudent.cpf}</p>
                   <span className={selectedStudent.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'}>
                     {selectedStudent.status === 'ACTIVE' ? 'Ativo' : 'Inativo'}
                   </span>
@@ -477,26 +493,26 @@ export default function Students() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                  <p className="text-xs text-gray-500 mb-1">Telefone</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedStudent.phone}</p>
+                <div className="p-4 rounded-xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200/50 dark:border-surface-800/30">
+                  <p className="text-xs text-gray-500 mb-1 font-medium">Telefone</p>
+                  <p className="text-sm font-medium text-surface-900 dark:text-white">{selectedStudent.phone}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                  <p className="text-xs text-gray-500 mb-1">Data de Nascimento</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{formatDate(selectedStudent.birthDate)}</p>
+                <div className="p-4 rounded-xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200/50 dark:border-surface-800/30">
+                  <p className="text-xs text-gray-500 mb-1 font-medium">Data de Nascimento</p>
+                  <p className="text-sm font-medium text-surface-900 dark:text-white">{formatDate(selectedStudent.birthDate)}</p>
                 </div>
-                <div className="col-span-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                  <p className="text-xs text-gray-500 mb-1">Endereço</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedStudent.address || '—'}</p>
+                <div className="col-span-2 p-4 rounded-xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200/50 dark:border-surface-800/30">
+                  <p className="text-xs text-gray-500 mb-1 font-medium">Endereço</p>
+                  <p className="text-sm font-medium text-surface-900 dark:text-white">{selectedStudent.address || '—'}</p>
                 </div>
               </div>
 
               {(selectedStudent as any).enrollments?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Matrículas</h4>
+                  <h4 className="font-semibold font-display text-surface-900 dark:text-white mb-3">Matrículas</h4>
                   <div className="space-y-2">
                     {(selectedStudent as any).enrollments.map((enrollment: any) => (
-                      <div key={enrollment.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                      <div key={enrollment.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-50 dark:bg-surface-800/50 border border-surface-200/50 dark:border-surface-800/30">
                         <span className="text-sm font-medium">{enrollment.plan?.name || 'Plano'}</span>
                         <span className={
                           enrollment.status === 'ACTIVE' ? 'badge-success' :
@@ -513,20 +529,20 @@ export default function Students() {
 
               {(selectedStudent as any).measurements?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Últimas Medidas</h4>
+                  <h4 className="font-semibold font-display text-surface-900 dark:text-white mb-3">Últimas Medidas</h4>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <th className="text-left py-2 text-xs text-gray-500">Data</th>
-                          <th className="text-left py-2 text-xs text-gray-500">Peso</th>
-                          <th className="text-left py-2 text-xs text-gray-500">Altura</th>
-                          <th className="text-left py-2 text-xs text-gray-500">% Gordura</th>
+                        <tr className="border-b border-surface-200 dark:border-surface-800">
+                          <th className="text-left py-2 text-xs text-gray-500 font-semibold">Data</th>
+                          <th className="text-left py-2 text-xs text-gray-500 font-semibold">Peso</th>
+                          <th className="text-left py-2 text-xs text-gray-500 font-semibold">Altura</th>
+                          <th className="text-left py-2 text-xs text-gray-500 font-semibold">% Gordura</th>
                         </tr>
                       </thead>
                       <tbody>
                         {(selectedStudent as any).measurements.slice(0, 5).map((m: any) => (
-                          <tr key={m.id} className="border-b border-gray-100 dark:border-gray-800">
+                          <tr key={m.id} className="border-b border-surface-100 dark:border-surface-800/50">
                             <td className="py-2">{formatDate(m.date)}</td>
                             <td className="py-2">{m.weight.toFixed(1)} kg</td>
                             <td className="py-2">{m.height.toFixed(2)} m</td>
@@ -545,13 +561,13 @@ export default function Students() {
 
       {/* Delete Confirmation */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" data-testid="modal-delete-confirm">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 animate-scale-in">
+        <div className="modal-overlay" data-testid="modal-delete-confirm">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-elevated w-full max-w-sm p-6 animate-scale-in border border-surface-200/50 dark:border-surface-800/50">
             <div className="text-center">
-              <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-6 h-6 text-red-600" />
+              <div className="w-14 h-14 rounded-full bg-danger-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6 text-danger-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Confirmar Exclusão</h3>
+              <h3 className="text-lg font-bold font-display text-surface-900 dark:text-white mb-2">Confirmar Exclusão</h3>
               <p className="text-sm text-gray-500 mb-6">Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.</p>
               <div className="flex gap-3">
                 <button onClick={() => setDeleteConfirm(null)} className="btn-secondary flex-1" data-testid="btn-cancel-delete">
